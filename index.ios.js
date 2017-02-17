@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
+  Dimensions,
   Text,
   ScrollView,
   Image,
@@ -30,7 +31,7 @@ export default class AwesomeProject extends Component {
     const products = this.state.products.map((product, i) => {
       return(
         <View style={styles.card} key={i}>
-          <Image source={{uri: product.images[0].url, width: 400, height: 400}} />
+          <Image style={styles.productImage} source={{uri: product.images[0].url}} />
           <Text style={styles.productName}>{product.name}</Text>
           <Text>
             <Text style={styles.productPrice}>${product.prices.normal_price}</Text>
@@ -62,7 +63,14 @@ export default class AwesomeProject extends Component {
   }
 }
 
+const deviceWidth = Dimensions.get('window').width
+const defaultFontSize = 18
+
 const styles = StyleSheet.create({
+  productImage: {
+    width: deviceWidth,
+    height: deviceWidth
+  },
   header: {
     backgroundColor: '#ababab',
     flexDirection: 'row',
@@ -74,14 +82,14 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#ffffff',
-    fontSize: 30
+    fontSize: defaultFontSize
   },
   productPrice: {
     color: '#c4262e',
-    fontSize: 25
+    fontSize: defaultFontSize
   },
   msrp: {
-    fontSize: 20,
+    fontSize: defaultFontSize * 0.8,
     textDecorationLine: 'line-through'
   },
   container: {
@@ -91,13 +99,14 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   productName: {
-    fontSize: 25
+    fontSize: defaultFontSize
   },
   card: {
+    flexDirection: 'column',
     marginBottom: 20
   },
   welcome: {
-    fontSize: 40,
+    fontSize: defaultFontSize * 1.5,
     textAlign: 'center',
     marginTop: 20,
     marginBottom: 10,
