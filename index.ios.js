@@ -15,12 +15,37 @@ import {
   View
 } from 'react-native';
 
+const Header = function() {
+  return <View style={styles.header}>
+    <Text style={styles.headerText}>Tanga So Hot Right Now</Text>
+  </View>
+}
+
+const Card = function(props) {
+  const product = props.product
+  return <View style={styles.card}>
+    <Image style={styles.productImage} source={{uri: product.images[0].url}} />
+    <Text style={styles.productName}>{product.name}</Text>
+    <Text>
+      <Text style={styles.productPrice}>${product.prices.normal_price}</Text>
+      &nbsp; &nbsp;
+      <Text style={styles.msrp}>${product.prices.msrp}</Text>
+    </Text>
+  </View>
+}
+
+const Loading = function({loading}) {
+  if (loading) {
+    return <Text style={styles.welcome}>Loading...</Text>
+  } else { return null }
+}
+
 export default class AwesomeProject extends Component {
   constructor(props) {
     super(props)
-    this.state = { products: [], loading: true }
+    this.state = { products: [], loading: true, page: 2 }
 
-    fetch('https://www.tanga.com/deals/men.json?per_page=5')
+    fetch(`https://www.tanga.com/deals/men.json?per_page=5&page=${this.state.page}`)
       .then((response) => response.json())
       .then((responseJson) => this.setState({products: responseJson}))
       .catch((error) => console.error(error))
@@ -28,43 +53,22 @@ export default class AwesomeProject extends Component {
   }
 
   render() {
-    const products = this.state.products.map((product, i) => {
-      return(
-        <View style={styles.card} key={i}>
-          <Image style={styles.productImage} source={{uri: product.images[0].url}} />
-          <Text style={styles.productName}>{product.name}</Text>
-          <Text>
-            <Text style={styles.productPrice}>${product.prices.normal_price}</Text>
-            &nbsp; &nbsp;
-            <Text style={styles.msrp}>${product.prices.msrp}</Text>
-          </Text>
-        </View>
-      )
-    })
-
-    var loading = null
-    if (this.state.loading) {
-      loading = <Text style={styles.welcome}>Loading...</Text>
-    }
+    const products = this.state.products.map((product, i) => <Card product={product} key={i} />)
 
     return (
-      <View>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Tanga So Hot Right Now</Text>
-        </View>
-        <View style={styles.container}>
-          <ScrollView>
-            {loading}
-            {products}
-          </ScrollView>
-        </View>
+      <View style={{flex: 1}}>
+        <Header />
+        <ScrollView style={styles.container}>
+          <Loading loading={this.state.loading} />
+          {products}
+        </ScrollView>
       </View>
     );
   }
 }
 
 const deviceWidth = Dimensions.get('window').width
-const defaultFontSize = 18
+const defaultFontSize = deviceWidth / 20
 
 const styles = StyleSheet.create({
   productImage: {
@@ -82,7 +86,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#ffffff',
-    fontSize: defaultFontSize
+    fontSize: deviceWidth / 15
   },
   productPrice: {
     color: '#c4262e',
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'line-through'
   },
   container: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     backgroundColor: '#ffffff',
     marginLeft: 10,
     marginRight: 10
