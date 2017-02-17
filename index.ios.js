@@ -1,19 +1,12 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  StyleSheet,
-  Dimensions,
   Text,
   ScrollView,
   Image,
   View
 } from 'react-native';
+import styles from './styles'
 
 const Header = function() {
   return <View style={styles.header}>
@@ -21,10 +14,15 @@ const Header = function() {
   </View>
 }
 
-const Card = function(props) {
-  const product = props.product
+const ProductImage = function({product}) {
+  const placeholder = "https://www.tanga.com/assets/tanga_engine/placeholders/tanga_product.png"
+  const url = product.images[2] ? product.images[2].url : placeholder
+  return <Image style={styles.productImage} source={{uri: url}} />
+}
+
+const Card = function({product}) {
   return <View style={styles.card}>
-    <Image style={styles.productImage} source={{uri: product.images[0].url}} />
+    <ProductImage product={product} />
     <Text style={styles.productName}>{product.name}</Text>
     <Text>
       <Text style={styles.productPrice}>${product.prices.normal_price}</Text>
@@ -34,10 +32,16 @@ const Card = function(props) {
   </View>
 }
 
+const CardList = function({products}) {
+  return <View>
+  {
+    products.map((product, i) => <Card product={product} key={i} />)
+  }
+  </View>
+}
+
 const Loading = function({loading}) {
-  if (loading) {
-    return <Text style={styles.welcome}>Loading...</Text>
-  } else { return null }
+  return loading ? <Text style={styles.welcome}>Loading...</Text> : null
 }
 
 export default class AwesomeProject extends Component {
@@ -53,73 +57,16 @@ export default class AwesomeProject extends Component {
   }
 
   render() {
-    const products = this.state.products.map((product, i) => <Card product={product} key={i} />)
-
     return (
-      <View style={{flex: 1}}>
+      <View style={styles.app}>
         <Header />
         <ScrollView style={styles.container}>
           <Loading loading={this.state.loading} />
-          {products}
+          <CardList products={this.state.products} />
         </ScrollView>
       </View>
     );
   }
 }
-
-const deviceWidth = Dimensions.get('window').width
-const defaultFontSize = deviceWidth / 20
-
-const styles = StyleSheet.create({
-  productImage: {
-    width: deviceWidth,
-    height: deviceWidth
-  },
-  header: {
-    backgroundColor: '#ababab',
-    flexDirection: 'row',
-    paddingTop: 30,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 10,
-    justifyContent: 'center'
-  },
-  headerText: {
-    color: '#ffffff',
-    fontSize: deviceWidth / 15
-  },
-  productPrice: {
-    color: '#c4262e',
-    fontSize: defaultFontSize
-  },
-  msrp: {
-    fontSize: defaultFontSize * 0.8,
-    textDecorationLine: 'line-through'
-  },
-  container: {
-    flexDirection: 'column',
-    backgroundColor: '#ffffff',
-    marginLeft: 10,
-    marginRight: 10
-  },
-  productName: {
-    fontSize: defaultFontSize
-  },
-  card: {
-    flexDirection: 'column',
-    marginBottom: 20
-  },
-  welcome: {
-    fontSize: defaultFontSize * 1.5,
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
 
 AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
